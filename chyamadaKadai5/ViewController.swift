@@ -12,11 +12,10 @@ final class ViewController: UIViewController {
     @IBOutlet private weak var secondTextField: UITextField!
     @IBOutlet private weak var calculateButton: UIButton!
     @IBOutlet private weak var resultLabel: UILabel!
-    private var alertMessage: String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
         [firstTextField, secondTextField].forEach { $0.keyboardType = .numberPad }
 
         calculateButton.addTarget(self,
@@ -37,42 +36,36 @@ final class ViewController: UIViewController {
 
 extension ViewController {
     @objc private func calculate() {
-        guard firstTextField.text != "" else {
-            alertMessage = "割られる数を入力してください"
-            alert()
+        guard let firstNumber = Double(firstTextField.text!) else {
+            presentAlert(message: "割られる数を入力してください")
             return
         }
-        guard secondTextField.text != "" else {
-            alertMessage = "割る数を入力してください"
-            alert()
+        guard let secondNumber = Double(secondTextField.text!) else {
+            presentAlert(message: "割る数を入力してください")
             return
         }
-        guard secondTextField.text != "0" else {
-            alertMessage = "割る数には０を入力しないでください"
-            alert()
+        guard secondNumber != 0 else {
+            presentAlert(message: "割る数には０を入力しないでください")
             return
         }
 
-        // 文字列がペーストされた場合は実行時エラーで終了させるためバインディングせずに対応
-        let firstNumber = Double(firstTextField.text!)
-        let secondNumber = Double(secondTextField.text!)
-        let result = firstNumber! / secondNumber!
+        let result = firstNumber / secondNumber
         resultLabel.text = String(result)
 
-        self.firstTextField.resignFirstResponder()
-        self.secondTextField.resignFirstResponder()
+        firstTextField.resignFirstResponder()
+        secondTextField.resignFirstResponder()
     }
 }
 
 extension ViewController {
-    @objc private func alert() {
+    @objc private func presentAlert(message: String) {
         let alertController = UIAlertController(title: "課題5",
-                                                message: alertMessage,
+                                                message: message,
                                                 preferredStyle: .alert)
         let alertAction = UIAlertAction(title: "OK",
                                         style: .default,
                                         handler: nil)
         alertController.addAction(alertAction)
-        self.present(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
 }
